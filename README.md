@@ -2,7 +2,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ollm.s3.us-east-1.amazonaws.com/files/logo2.png">
-    <img alt="vLLM" src="https://ollm.s3.us-east-1.amazonaws.com/files/logo2.png" width=52%>
+    <img alt="oLLM" src="https://ollm.s3.us-east-1.amazonaws.com/files/logo2.png" width=52%>
   </picture>
 </p>
 
@@ -11,10 +11,11 @@ LLM Inference for Large-Context Offline Workloads
 </h3>
 
 oLLM is a lightweight Python library for large-context LLM inference, built on top of Huggingface Transformers and PyTorch. It enables running models like [gpt-oss-20B](https://huggingface.co/openai/gpt-oss-20b), [qwen3-next-80B](https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct) or [Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct) on 100k context using ~$200 consumer GPU with 8GB VRAM.  No quantization is used—only fp16/bf16 precision. 
-<p dir="auto"><em>Latest updates (1.0.0)</em> 🔥</p>
+
+<p dir="auto"><em><a href="https://github.com/Mega4alik/ollm/wiki/Releases">Latest updates</a> (1.0.3)</em> 🔥</p>
 <ul dir="auto">
-<li> <code>kvikio</code> and <code>flash-attn</code> are optional now, meaning no hardware restrictions beyond HF transformers</li>
-<li><code>Llama3</code> models use original HF files now (make sure to delete the existing model folder(llama3-*) before running it)</li>
+<li><code>AutoInference</code> with any Llama3 / gemma3 model + <a href="https://github.com/huggingface/peft">PEFT</a> adapter support</li>
+<li><code>kvikio</code> and <code>flash-attn</code> are optional now, meaning no hardware restrictions beyond HF transformers</li>
 <li>Multimodal <b>voxtral-small-24B</b> (audio+text) added. <a href="https://github.com/Mega4alik/ollm/blob/main/example_audio.py">[sample with audio]</a> </li>
 <li>Multimodal <b>gemma3-12B</b> (image+text) added. <a href="https://github.com/Mega4alik/ollm/blob/main/example_image.py">[sample with image]</a> </li>
 <li><b>qwen3-next-80B</b> (160GB model) added with <span style="color:blue">⚡️1tok/2s</span> throughput (our fastest model so far)</li>
@@ -81,7 +82,7 @@ Check out the [Troubleshooting](https://github.com/Mega4alik/ollm/wiki/Troublesh
 
 Code snippet sample 
 
-```bash
+```python
 from ollm import Inference, file_get_contents, TextStreamer
 o = Inference("llama3-1B-chat", device="cuda:0", logging=True) #llama3-1B/3B/8B-chat, gpt-oss-20B, qwen3-next-80B
 o.ini_model(models_dir="./models/", force_download=False)
@@ -97,9 +98,19 @@ print(answer)
 ```
 or run sample python script as `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python example.py` 
 
+```python
+# with AutoInference, you can run any LLama3/gemma3 model with PEFT adapter support
+# pip install peft 
+from ollm import AutoInference
+o = AutoInference("./models/gemma3-12B", # any llama3 or gemma3 model
+  adapter_dir="./myadapter/checkpoint-20", # PEFT adapter checkpoint if available
+  device="cuda:0", multimodality=False, logging=True)
+...
+```
 **More samples**
 - [gemma3-12B image+text](https://github.com/Mega4alik/ollm/blob/main/example_image.py)
 - [voxtral-small-24B audio+text](https://github.com/Mega4alik/ollm/blob/main/example_audio.py)
+- [AutoInference + SFT](https://github.com/Mega4alik/peftee?tab=readme-ov-file#usage)
 
 
 ## Knowledge base
